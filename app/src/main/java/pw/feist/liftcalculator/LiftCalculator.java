@@ -4,6 +4,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.beardedhen.androidbootstrap.BootstrapButton;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class LiftCalculator extends ActionBarActivity {
@@ -12,8 +20,14 @@ public class LiftCalculator extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lift_calculator);
+        ButterKnife.inject(this);
     }
 
+    @OnClick(R.id.calculate)
+    void someBroClickedCalaculate(){
+        TextView titleBar = (TextView) findViewById(R.id.textfield1);
+        titleBar.setText("hello governor");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
