@@ -37,8 +37,8 @@ public class LiftCalculator extends ActionBarActivity {
         plateMap.put((float) 25, new Plate((float) 0.6, "#008000"));
         plateMap.put((float) 15, new Plate((float) 0.4, "#0000FF"));
         plateMap.put((float) 10, new Plate((float) 0.3, "#000000"));
-        plateMap.put((float) 5, new Plate((float) 0.2, "#888888"));
-        plateMap.put((float) 2.5, new Plate((float) 0.05, "#888888"));
+        plateMap.put((float) 5, new Plate((float) 0.2, "#888888", (float) 0.6));
+        plateMap.put((float) 2.5, new Plate((float) 0.05, "#888888", (float) 0.3));
     }
 
 
@@ -84,7 +84,8 @@ public class LiftCalculator extends ActionBarActivity {
         for(Float weight: weights){
             plate = plateMap.get(weight);
             right = left + maxPlateWidth * plate.getWeight();
-            rect = new RectF(left, top, right, bottom);
+            rect = new RectF(left, top - ((1 - plate.getHeight()) * ((top - bottom) / 2)),
+                    right, bottom + ((1 - plate.getHeight()) * ((top - bottom) / 2)));
             this.canvas.drawRoundRect(rect, 10, 10, plate.getPaint());
             left = right;
             Log.w("WARNING", weight.toString());
