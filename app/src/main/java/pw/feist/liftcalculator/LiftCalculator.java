@@ -87,7 +87,7 @@ public class LiftCalculator extends ActionBarActivity {
             rect = new RectF(left, top - ((1 - plate.getHeight()) * ((top - bottom) / 2)),
                     right, bottom + ((1 - plate.getHeight()) * ((top - bottom) / 2)));
             this.canvas.drawRoundRect(rect, 10, 10, plate.getPaint());
-            left = right;
+            left = right + 3; //for space between plates
             Log.w("WARNING", weight.toString());
         }
 
@@ -115,12 +115,4 @@ public class LiftCalculator extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void onDraw(Canvas canvas){
-        Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(50, 50, 100, paint);
-
-
-    }
 }
