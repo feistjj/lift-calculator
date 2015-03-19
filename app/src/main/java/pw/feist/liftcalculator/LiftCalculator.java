@@ -2,8 +2,6 @@ package pw.feist.liftcalculator;
 
 import android.graphics.Canvas;
 import android.util.Log;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -56,14 +54,14 @@ public class LiftCalculator extends ActionBarActivity {
         Float [] fakePlates = {(float) 45,( float) 45,( float) 25, (float) 10, (float) 5};
         createPlates(fakePlates);
 
-        LinearLayout ll = (LinearLayout) findViewById(R.id.layout);
+        LinearLayout ll = (LinearLayout) findViewById(R.id.plates);
         ll.setBackground(new BitmapDrawable(getResources(), bg));
 
         ButterKnife.inject(this);
     }
 
-    @OnClick(R.id.calculate)
-    void someBroClickedCalaculate(){
+    @OnClick(R.id.submit)
+    void someBroClickedSubmit(){
         TextView titleBar = (TextView) findViewById(R.id.textfield1);
         titleBar.setText("hello governor");
     }

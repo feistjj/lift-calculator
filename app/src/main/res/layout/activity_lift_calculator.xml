@@ -1,6 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bootstrap="http://schemas.android.com/apk/res-auto"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+
+    xmlns:bootstrap="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -14,18 +18,28 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/layout"></LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_weight="0.4"
+        android:id="@+id/plates"></LinearLayout>
     <!-- basic button -->
+    <com.beardedhen.androidbootstrap.BootstrapEditText
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:hint="@string/weight_hint"
+        android:inputType="number"
+        />
+
+
 
     <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/calculate"
-        android:layout_alignParentBottom="true"
+        android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Success"
+        android:text="@string/submit"
         bootstrap:bb_icon_right="fa-android"
         bootstrap:bb_type="success"
         />
-</RelativeLayout>
+
+</LinearLayout>
