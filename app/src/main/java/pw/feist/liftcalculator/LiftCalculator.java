@@ -1,10 +1,14 @@
 package pw.feist.liftcalculator;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.graphics.RectF;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -13,19 +17,24 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 
 
+import com.beardedhen.androidbootstrap.BootstrapEditText;
+
 import java.util.Collections;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
+import butterknife.OnTextChanged;
 
 
 public class LiftCalculator extends ActionBarActivity {
     private static final int MAX_PLATES = 10;
 
+    private static final float [] plateWeights = {45, 35, 25, 15, 10, 5, (float) 2.5};
     private static final HashMap<Float, Plate> plateMap;
     static
     {
@@ -41,6 +50,7 @@ public class LiftCalculator extends ActionBarActivity {
 
 
     Canvas canvas;
+    int barWeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,23 +60,48 @@ public class LiftCalculator extends ActionBarActivity {
         Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888);
         this.canvas = new Canvas(bg);
 
-
-        Float [] fakePlates = {(float) 45,( float) 45,( float) 25, (float) 10, (float) 5};
-        createPlates(fakePlates);
-
         LinearLayout ll = (LinearLayout) findViewById(R.id.plates);
         ll.setBackground(new BitmapDrawable(getResources(), bg));
 
         ButterKnife.inject(this);
     }
-
-    @OnClick(R.id.submit)
-    void someBroClickedSubmit(){
+    @OnTextChanged(value = R.id.weightField)
+    void calculateWeight(){
+        float userWeight;
         TextView titleBar = (TextView) findViewById(R.id.textfield1);
-        titleBar.setText("hello governor");
+        BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
+        this.canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+
+        try {
+            userWeight = Float.valueOf(weightField.getText().toString());
+        }
+        catch (NumberFormatException ex){
+            return; // probably empty
+        }
+        if(userWeight <= this.barWeight) {
+            return;
+        }
+        userWeight = (userWeight - this.barWeight)/2;
+        int quotient;
+        List<Float> ourPlates = new ArrayList<Float>();
+        for (float weight: plateWeights){
+            quotient = (int) (userWeight / weight);
+            if (quotient > 0){
+                for (int ii = 0; ii < quotient; ii ++){
+                    ourPlates.add(weight);
+                }
+            userWeight -= (int) (quotient * weight);
+            if(userWeight == 0)  //avoid divide by zero errors
+                break;
+            }
+        }
+        createPlates(ourPlates);
+        titleBar.setText(ourPlates.toString());
     }
 
-    private void createPlates(Float [] weights){
+
+
+    private void createPlates(List<Float> weights){
         //  sort weightings and divide up useable area
         Plate plate; // plate object
         RectF rect;  // rectangle depicting plate
@@ -75,9 +110,9 @@ public class LiftCalculator extends ActionBarActivity {
         //top and bottom for all will match
         int top = this.canvas.getHeight() / 10;
         int bottom = top + this.canvas.getHeight() / 4; // 25%
-        float maxPlateWidth = (float) 0.75 * this.canvas.getWidth() / MAX_PLATES;
+        int maxPlates = weights.size() < MAX_PLATES ? MAX_PLATES : weights.size();
+        float maxPlateWidth = (float) 0.75 * this.canvas.getWidth() / maxPlates;
 
-        Arrays.sort(weights, Collections.reverseOrder());
 
         for(Float weight: weights){
             plate = plateMap.get(weight);
@@ -86,7 +121,6 @@ public class LiftCalculator extends ActionBarActivity {
                     right, bottom + ((1 - plate.getHeight()) * ((top - bottom) / 2)));
             this.canvas.drawRoundRect(rect, 10, 10, plate.getPaint());
             left = right + 3; //for space between plates
-            Log.w("WARNING", weight.toString());
         }
 
     }
