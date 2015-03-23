@@ -4,5 +4,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="submit">Submit</string>
     <string name="action_settings">Settings</string>
-    <string name="weight_hint">Weight (Lbs)</string>
+    <string name="weight_lbs">Weight (Lbs)</string>
+    <string name="weight_kilos">Weight (Kilos)</string>
+    <string-array name="region_select">
+        <item>Lbs</item>
+        <item>Kilos</item>
+    </string-array>
+
 </resources>

@@ -1,16 +1,13 @@
 package pw.feist.liftcalculator;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.util.Log;
 import android.graphics.RectF;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.graphics.Bitmap;
@@ -19,38 +16,51 @@ import android.graphics.drawable.BitmapDrawable;
 
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 
-import java.util.Collections;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 
 
 public class LiftCalculator extends ActionBarActivity {
     private static final int MAX_PLATES = 10;
 
-    private static final float [] plateWeights = {45, 35, 25, 15, 10, 5, (float) 2.5};
-    private static final HashMap<Float, Plate> plateMap;
+    private static final float [] platesInLbs = {45, 35, 25, 15, 10, 5, (float) 2.5};
+    private static final float [] platesInKilos = { 25, 20, 15, 10, 5, (float) 2.5};
+
+    private static final HashMap<Float, Plate> plateMapLbs;
     static
     {
-        plateMap = new HashMap<Float, Plate>();
-        plateMap.put((float) 45, new Plate((float) 1.0, "#FF0000"));
-        plateMap.put((float) 35, new Plate((float) 0.8, "#FFFF00"));
-        plateMap.put((float) 25, new Plate((float) 0.6, "#008000"));
-        plateMap.put((float) 15, new Plate((float) 0.4, "#0000FF"));
-        plateMap.put((float) 10, new Plate((float) 0.3, "#000000"));
-        plateMap.put((float) 5, new Plate((float) 0.2, "#888888", (float) 0.6));
-        plateMap.put((float) 2.5, new Plate((float) 0.05, "#888888", (float) 0.3));
+        plateMapLbs = new HashMap<Float, Plate>();
+        plateMapLbs.put((float) 45, new Plate((float) 1.0, "#FF0000")); //red
+        plateMapLbs.put((float) 35, new Plate((float) 0.8, "#FFFF00")); //yellow
+        plateMapLbs.put((float) 25, new Plate((float) 0.6, "#008000")); //green
+        plateMapLbs.put((float) 15, new Plate((float) 0.4, "#0000FF")); //blue
+        plateMapLbs.put((float) 10, new Plate((float) 0.3, "#000000")); //black
+        plateMapLbs.put((float) 5, new Plate((float) 0.2, "#888888", (float) 0.6));  //gray
+        plateMapLbs.put((float) 2.5, new Plate((float) 0.05, "#888888", (float) 0.3)); //gray
+    }
+    private static final HashMap<Float, Plate> plateMapKilos;
+    static
+    {
+        plateMapKilos = new HashMap<Float, Plate>();
+        plateMapKilos.put((float) 25, new Plate((float) 1.0, "#FF0000"));
+        plateMapKilos.put((float) 20, new Plate((float) 0.8, "#FFFF00"));
+        plateMapKilos.put((float) 15, new Plate((float) 0.6, "#008000"));
+        plateMapKilos.put((float) 10, new Plate((float) 0.4, "#0000FF"));
+        plateMapKilos.put((float) 5, new Plate((float) 0.3, "#000000"));
+        plateMapKilos.put((float) 2.5, new Plate((float) 0.2, "#888888", (float) 0.6));
+
     }
 
 
     Canvas canvas;
-    int barWeight;
+    int barWeight = 45;  //defualt to mens bar
+    boolean lbs = true;  //default to lbs, murica!
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +75,24 @@ public class LiftCalculator extends ActionBarActivity {
 
         ButterKnife.inject(this);
     }
+    @OnItemSelected(value = R.id.regionSelect)
+    void changeRegion(){
+        Spinner region = (Spinner) findViewById(R.id.regionSelect);
+        String text = region.getSelectedItem().toString();
+        BootstrapEditText weightFeild = (BootstrapEditText) findViewById(R.id.weightField);
+        weightFeild.setText("");
+
+        if(text.toLowerCase().equals("lbs")){
+            this.lbs = true;
+            weightFeild.setHint(R.string.weight_lbs);
+        }
+        else{
+            this.lbs = false;
+            weightFeild.setHint(R.string.weight_kilos);
+        }
+
+    }
+
     @OnTextChanged(value = R.id.weightField)
     void calculateWeight(){
         float userWeight;
@@ -84,7 +112,8 @@ public class LiftCalculator extends ActionBarActivity {
         userWeight = (userWeight - this.barWeight)/2;
         int quotient;
         List<Float> ourPlates = new ArrayList<Float>();
-        for (float weight: plateWeights){
+        float [] standardPlates = this.lbs ? platesInLbs : platesInKilos;
+        for (float weight: standardPlates){
             quotient = (int) (userWeight / weight);
             if (quotient > 0){
                 for (int ii = 0; ii < quotient; ii ++){
@@ -113,6 +142,7 @@ public class LiftCalculator extends ActionBarActivity {
         int maxPlates = weights.size() < MAX_PLATES ? MAX_PLATES : weights.size();
         float maxPlateWidth = (float) 0.75 * this.canvas.getWidth() / maxPlates;
 
+        HashMap<Float, Plate> plateMap = this.lbs ? plateMapLbs : plateMapKilos;
 
         for(Float weight: weights){
             plate = plateMap.get(weight);
