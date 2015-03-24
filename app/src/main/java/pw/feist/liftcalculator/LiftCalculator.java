@@ -102,6 +102,13 @@ public class LiftCalculator extends ActionBarActivity {
         }
     }
 
+    @OnItemSelected(value = R.id.barSelect)
+    void changeBarWeight(){
+        Spinner barSelect = (Spinner) findViewById(R.id.barSelect);
+        String selected = barSelect.getSelectedItem().toString().toLowerCase();
+        this.barWeight = Integer.valueOf(selected.substring(0,2));
+    }
+
 
     @OnItemSelected(value = R.id.regionSelect)
     void changeRegion(){
@@ -139,6 +146,7 @@ public class LiftCalculator extends ActionBarActivity {
     }
 
     @OnTextChanged(value = R.id.weightField)
+    @OnItemSelected(value = R.id.barSelect)
     void calculateWeight(){
         float userWeight;
         TextView titleBar = (TextView) findViewById(R.id.textfield1);
