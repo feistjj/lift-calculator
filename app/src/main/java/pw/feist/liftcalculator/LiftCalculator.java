@@ -1,5 +1,6 @@
 package pw.feist.liftcalculator;
 
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
@@ -7,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.LinearLayout;
@@ -57,40 +59,83 @@ public class LiftCalculator extends ActionBarActivity {
 
     }
 
-
-    Canvas canvas;
-    int barWeight = 45;  //defualt to mens bar
-    boolean lbs = true;  //default to lbs, murica!
+    private Canvas canvas;
+    //private SharedPreferences preferences = getSharedPreferences("LiftCalculator", MODE_PRIVATE);
+    private int barWeight = 45;//preferences.getInt("bar_weight", 45);
+    boolean lbsIsRegion = true;//preferences.getBoolean("lbsIsRegion", true);  //default to lbs, murica!
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lift_calculator);
 
-        Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888);
+        Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888); // not sure about the size
         this.canvas = new Canvas(bg);
-
         LinearLayout ll = (LinearLayout) findViewById(R.id.plates);
         ll.setBackground(new BitmapDrawable(getResources(), bg));
 
         ButterKnife.inject(this);
     }
+
+    void createSpinnerArray(){
+        List<String> spinnerArray = new ArrayList<String>();
+        if (this.lbsIsRegion){
+            spinnerArray.add("45 Lbs");
+            spinnerArray.add("35 Lbs");
+        }
+        else{
+            spinnerArray.add("20 Kilos");
+            spinnerArray.add("15 Kilos");
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner barSelect = (Spinner) findViewById(R.id.barSelect);
+        String selected = barSelect.getSelectedItem().toString().toLowerCase();
+        barSelect.setAdapter(adapter);
+        if(this.lbsIsRegion) {
+            if (selected.equals("15 kilos")){
+                barSelect.setSelection(1);
+            }
+        }
+        else if(selected.equals("35 lbs")){
+            barSelect.setSelection(1);
+        }
+    }
+
+
     @OnItemSelected(value = R.id.regionSelect)
     void changeRegion(){
         Spinner region = (Spinner) findViewById(R.id.regionSelect);
         String text = region.getSelectedItem().toString();
-        BootstrapEditText weightFeild = (BootstrapEditText) findViewById(R.id.weightField);
-        weightFeild.setText("");
+        BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
+        Integer userWeight = 0;
+        try {
+            userWeight = Integer.valueOf(weightField.getText().toString());
+        }
+        catch (NumberFormatException ex){
+            //pass
+        }
+        weightField.setText("");  // in case it's zero
 
         if(text.toLowerCase().equals("lbs")){
-            this.lbs = true;
-            weightFeild.setHint(R.string.weight_lbs);
+            this.lbsIsRegion = true;
+            weightField.setHint(R.string.weight_lbs);
+
+            if (userWeight > 0){
+                userWeight = (int) (userWeight * 2.20462);
+                weightField.setText(userWeight.toString());
+            }
+
         }
         else{
-            this.lbs = false;
-            weightFeild.setHint(R.string.weight_kilos);
+            this.lbsIsRegion = false;
+            weightField.setHint(R.string.weight_kilos);
+            if (userWeight > 0){
+                userWeight = (int) (userWeight / 2.20462);
+                weightField.setText(userWeight.toString());
+            }
         }
-
+        createSpinnerArray();
     }
 
     @OnTextChanged(value = R.id.weightField)
@@ -112,7 +157,7 @@ public class LiftCalculator extends ActionBarActivity {
         userWeight = (userWeight - this.barWeight)/2;
         int quotient;
         List<Float> ourPlates = new ArrayList<Float>();
-        float [] standardPlates = this.lbs ? platesInLbs : platesInKilos;
+        float [] standardPlates = this.lbsIsRegion ? platesInLbs : platesInKilos;
         for (float weight: standardPlates){
             quotient = (int) (userWeight / weight);
             if (quotient > 0){
@@ -142,7 +187,7 @@ public class LiftCalculator extends ActionBarActivity {
         int maxPlates = weights.size() < MAX_PLATES ? MAX_PLATES : weights.size();
         float maxPlateWidth = (float) 0.75 * this.canvas.getWidth() / maxPlates;
 
-        HashMap<Float, Plate> plateMap = this.lbs ? plateMapLbs : plateMapKilos;
+        HashMap<Float, Plate> plateMap = this.lbsIsRegion ? plateMapLbs : plateMapKilos;
 
         for(Float weight: weights){
             plate = plateMap.get(weight);

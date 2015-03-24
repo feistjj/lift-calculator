@@ -10,5 +10,13 @@
         <item>Lbs</item>
         <item>Kilos</item>
     </string-array>
+    <string-array name="bar_lbs">
+        <item>45 lbs</item>
+        <item>35 lbs</item>
+    </string-array>
+    <string-array name="bar_kilos">
+        <item>20 Kilos</item>
+        <item>15 Kilos</item>
+    </string-array>
 
 </resources>

@@ -20,6 +20,12 @@
         android:layout_height="wrap_content"
         android:drawSelectorOnTop="true"
         android:entries="@array/region_select"/>
+    <Spinner
+        android:id="@+id/barSelect"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawSelectorOnTop="true"
+        android:entries="@array/bar_lbs"/>
 
     <LinearLayout
         android:orientation="horizontal"
