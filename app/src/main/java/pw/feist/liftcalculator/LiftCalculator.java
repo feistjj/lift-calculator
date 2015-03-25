@@ -44,7 +44,7 @@ public class LiftCalculator extends ActionBarActivity {
         plateMapLbs.put((float) 15, new Plate((float) 0.4, "#0000FF")); //blue
         plateMapLbs.put((float) 10, new Plate((float) 0.3, "#000000")); //black
         plateMapLbs.put((float) 5, new Plate((float) 0.2, "#888888", (float) 0.6));  //gray
-        plateMapLbs.put((float) 2.5, new Plate((float) 0.05, "#888888", (float) 0.3)); //gray
+        plateMapLbs.put((float) 2.5, new Plate((float) 0.05, "#888888", (float) 0.4)); //gray
     }
     private static final HashMap<Float, Plate> plateMapKilos;
     static
@@ -149,7 +149,6 @@ public class LiftCalculator extends ActionBarActivity {
     @OnItemSelected(value = R.id.barSelect)
     void calculateWeight(){
         float userWeight;
-        TextView titleBar = (TextView) findViewById(R.id.textfield1);
         BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
         this.canvas.drawColor(0, PorterDuff.Mode.CLEAR);
 
@@ -178,7 +177,6 @@ public class LiftCalculator extends ActionBarActivity {
             }
         }
         createPlates(ourPlates);
-        titleBar.setText(ourPlates.toString());
     }
 
 
