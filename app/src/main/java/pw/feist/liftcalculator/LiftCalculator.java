@@ -29,7 +29,7 @@ import butterknife.OnTextChanged;
 
 
 public class LiftCalculator extends ActionBarActivity {
-    private static final int MAX_PLATES = 10;
+    private static final int MAX_PLATES = 6;
 
     private static final float [] platesInLbs = {45, 35, 25, 15, 10, 5, (float) 2.5};
     private static final float [] platesInKilos = { 25, 20, 15, 10, 5, (float) 2.5};
@@ -41,20 +41,20 @@ public class LiftCalculator extends ActionBarActivity {
         plateMapLbs.put((float) 45, new Plate((float) 1.0, "#FF0000")); //red
         plateMapLbs.put((float) 35, new Plate((float) 0.8, "#FFFF00")); //yellow
         plateMapLbs.put((float) 25, new Plate((float) 0.6, "#008000")); //green
-        plateMapLbs.put((float) 15, new Plate((float) 0.4, "#0000FF")); //blue
-        plateMapLbs.put((float) 10, new Plate((float) 0.3, "#000000")); //black
-        plateMapLbs.put((float) 5, new Plate((float) 0.2, "#888888", (float) 0.6));  //gray
-        plateMapLbs.put((float) 2.5, new Plate((float) 0.05, "#888888", (float) 0.4)); //gray
+        plateMapLbs.put((float) 15, new Plate((float) 0.5, "#0000FF")); //blue
+        plateMapLbs.put((float) 10, new Plate((float) 0.4, "#000000")); //black
+        plateMapLbs.put((float) 5, new Plate((float) 0.3, "#888888", (float) 0.5));  //gray
+        plateMapLbs.put((float) 2.5, new Plate((float) 0.2, "#888888", (float) 0.3)); //gray
     }
     private static final HashMap<Float, Plate> plateMapKilos;
     static
     {
         plateMapKilos = new HashMap<Float, Plate>();
         plateMapKilos.put((float) 25, new Plate((float) 1.0, "#FF0000"));
-        plateMapKilos.put((float) 20, new Plate((float) 0.8, "#FFFF00"));
+        plateMapKilos.put((float) 20, new Plate((float) 0.7, "#FFFF00"));
         plateMapKilos.put((float) 15, new Plate((float) 0.6, "#008000"));
-        plateMapKilos.put((float) 10, new Plate((float) 0.4, "#0000FF"));
-        plateMapKilos.put((float) 5, new Plate((float) 0.3, "#000000"));
+        plateMapKilos.put((float) 10, new Plate((float) 0.5, "#0000FF"));
+        plateMapKilos.put((float) 5, new Plate((float) 0.4, "#000000"));
         plateMapKilos.put((float) 2.5, new Plate((float) 0.2, "#888888", (float) 0.6));
 
     }
@@ -188,10 +188,11 @@ public class LiftCalculator extends ActionBarActivity {
         float right, left = 0;
 
         //top and bottom for all will match
-        int top = this.canvas.getHeight() / 10;
-        int bottom = top + this.canvas.getHeight() / 4; // 25%
+        int top = 0;
+        int bottom = this.canvas.getHeight();
+        int spacing = 3;
         int maxPlates = weights.size() < MAX_PLATES ? MAX_PLATES : weights.size();
-        float maxPlateWidth = (float) 0.75 * this.canvas.getWidth() / maxPlates;
+        float maxPlateWidth = (this.canvas.getWidth() - (maxPlates * spacing))  / maxPlates;
 
         HashMap<Float, Plate> plateMap = this.lbsIsRegion ? plateMapLbs : plateMapKilos;
 
@@ -201,7 +202,7 @@ public class LiftCalculator extends ActionBarActivity {
             rect = new RectF(left, top - ((1 - plate.getHeight()) * ((top - bottom) / 2)),
                     right, bottom + ((1 - plate.getHeight()) * ((top - bottom) / 2)));
             this.canvas.drawRoundRect(rect, 10, 10, plate.getPaint());
-            left = right + 3; //for space between plates
+            left = right + spacing; //for space between plates
         }
 
     }

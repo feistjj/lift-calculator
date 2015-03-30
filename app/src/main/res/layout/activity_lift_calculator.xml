@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".LiftCalculator">
-
+    <!-- Unit Selector -->
     <LinearLayout
     android:orientation="horizontal"
     android:layout_width="fill_parent"
@@ -34,7 +34,7 @@
             android:entries="@array/region_select"/>
 
     </LinearLayout>
-
+    <!-- Weight Selector -->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -58,14 +58,28 @@
 
     </LinearLayout>
 
-
+    <!-- Plate Drawer Selector -->
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.4"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp">
+        <ImageView
+            android:id="@+id/rectimage"
+            android:layout_centerVertical="true"
+            android:layout_height="50dp"
+            android:layout_width="fill_parent"
+            android:src="@drawable/rectangle">
+        </ImageView>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.4"
         android:id="@+id/plates"></LinearLayout>
-    <!-- basic button -->
+    </RelativeLayout>
+
+    <!-- text field -->
     <com.beardedhen.androidbootstrap.BootstrapEditText
         android:id="@+id/weightField"
         android:layout_width="150dp"
@@ -73,18 +87,7 @@
         android:layout_margin="10dp"
         android:hint="@string/weight_lbs"
         android:inputType="number"
-        android:maxLength="4"
-        />
-
-
-
-    <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/submit"
-        bootstrap:bb_type="success"
+        android:maxLength="3"
         />
 
 </LinearLayout>
