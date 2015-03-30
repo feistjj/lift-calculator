@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.LinearLayout;
@@ -68,10 +69,9 @@ public class LiftCalculator extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lift_calculator);
-
         Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888); // not sure about the size
         this.canvas = new Canvas(bg);
-        LinearLayout ll = (LinearLayout) findViewById(R.id.plates);
+        ImageView ll = (ImageView) findViewById(R.id.plates);
         ll.setBackground(new BitmapDrawable(getResources(), bg));
 
         ButterKnife.inject(this);

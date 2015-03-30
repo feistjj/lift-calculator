@@ -72,11 +72,12 @@
             android:layout_width="fill_parent"
             android:src="@drawable/rectangle">
         </ImageView>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/plates"></LinearLayout>
+        <ImageView
+            android:orientation="horizontal"
+            android:layout_centerVertical="true"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/plates"></ImageView>
     </RelativeLayout>
 
     <!-- text field -->
