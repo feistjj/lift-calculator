@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,6 +31,7 @@ import butterknife.OnTextChanged;
 
 
 public class LiftCalculator extends ActionBarActivity {
+
     private static final int MAX_PLATES = 6;
 
     private static final float [] platesInLbs = {45, 35, 25, 15, 10, 5, (float) 2.5};
@@ -61,21 +63,53 @@ public class LiftCalculator extends ActionBarActivity {
     }
 
     private Canvas canvas;
-    //private SharedPreferences preferences = getSharedPreferences("LiftCalculator", MODE_PRIVATE);
-    private int barWeight = 45;//preferences.getInt("bar_weight", 45);
-    boolean lbsIsRegion = true;//preferences.getBoolean("lbsIsRegion", true);  //default to lbs, murica!
+    private int barWeight;
+    boolean lbsIsRegion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lift_calculator);
+
+        //plate bitmap
         Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888); // not sure about the size
         this.canvas = new Canvas(bg);
         ImageView ll = (ImageView) findViewById(R.id.plates);
         ll.setBackground(new BitmapDrawable(getResources(), bg));
 
         ButterKnife.inject(this);
+        // Restore preferences
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        this.barWeight = settings.getInt("barWeight", 45);
+        this.lbsIsRegion = settings.getBoolean("lbsIsRegion", true);
+
+        Spinner regionSelect = (Spinner) findViewById(R.id.regionSelect);
+        int selection = this.lbsIsRegion ? 0 : 1;
+        regionSelect.setSelection(selection);
+        createSpinnerArray();
+
+
     }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        saveSettings();
+    }
+
+    void saveSettings(){
+        // We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        editor.putInt("barWeight", this.barWeight);
+        editor.putBoolean("lbsIsRegion", this.lbsIsRegion);
+
+        // Commit the edits!
+        editor.commit();
+    }
+
 
     void createSpinnerArray(){
         List<String> spinnerArray = new ArrayList<String>();
@@ -93,11 +127,11 @@ public class LiftCalculator extends ActionBarActivity {
         String selected = barSelect.getSelectedItem().toString().toLowerCase();
         barSelect.setAdapter(adapter);
         if(this.lbsIsRegion) {
-            if (selected.equals("15 kilos")){
+            if (selected.equals("15 kilos") || this.barWeight == 35){
                 barSelect.setSelection(1);
             }
         }
-        else if(selected.equals("35 lbs")){
+        else if(selected.equals("35 lbs") || this.barWeight == 15){
             barSelect.setSelection(1);
         }
     }
