@@ -91,7 +91,57 @@
             android:id="@+id/plates"></ImageView>
     </RelativeLayout>
 
-    <!-- text field -->
+    <!-- weight buttons -->
+    <LinearLayout
+        android:id="@+id/weightButtons"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight=".1"
+        android:layout_gravity="center_horizontal">
+        <include
+            android:id="@+id/weightSelector0"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/weight_selector"/>
+        <include
+            android:id="@+id/weightSelector1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/weight_selector"/>
+        <include
+            android:id="@+id/weightSelector2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/weight_selector"/>
+        <include
+            android:id="@+id/weightSelector3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/weight_selector"/>
+        <include
+            android:id="@+id/weightSelector4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/weight_selector"/>
+        <include
+            android:id="@+id/weightSelector5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/weight_selector"/>
+        <include
+            android:id="@+id/weightSelector6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/weight_selector"/>
+
+
+
+
+     </LinearLayout>
+
+
+    <!-- weight text field -->
     <com.beardedhen.androidbootstrap.BootstrapEditText
         android:id="@+id/weightField"
         android:layout_width="150dp"

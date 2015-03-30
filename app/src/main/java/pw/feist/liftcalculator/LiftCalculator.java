@@ -10,14 +10,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 
 import java.util.ArrayList;
@@ -62,6 +63,17 @@ public class LiftCalculator extends ActionBarActivity {
 
     }
 
+    private List<Button> weightButtons;
+    private static final int[] BUTTON_IDS = {
+            R.id.weightSelector0,
+            R.id.weightSelector1,
+            R.id.weightSelector2,
+            R.id.weightSelector3,
+            R.id.weightSelector4,
+            R.id.weightSelector5,
+            R.id.weightSelector6,
+    };
+
     private Canvas canvas;
     private int barWeight;
     boolean lbsIsRegion;
@@ -86,8 +98,8 @@ public class LiftCalculator extends ActionBarActivity {
         Spinner regionSelect = (Spinner) findViewById(R.id.regionSelect);
         int selection = this.lbsIsRegion ? 0 : 1;
         regionSelect.setSelection(selection);
-        createSpinnerArray();
-
+        createBarSpinner();
+        createWeightButtons();
 
     }
 
@@ -111,7 +123,7 @@ public class LiftCalculator extends ActionBarActivity {
     }
 
 
-    void createSpinnerArray(){
+    void createBarSpinner(){
         List<String> spinnerArray = new ArrayList<String>();
         if (this.lbsIsRegion){
             spinnerArray.add("45 Lbs");
@@ -176,7 +188,7 @@ public class LiftCalculator extends ActionBarActivity {
                 weightField.setText(userWeight.toString());
             }
         }
-        createSpinnerArray();
+        createBarSpinner();
     }
 
     @OnTextChanged(value = R.id.weightField)
@@ -261,6 +273,22 @@ public class LiftCalculator extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void createWeightButtons(){
+        this.weightButtons = new ArrayList<Button>();
+        int ii = 0;
+        String value;
+        for(int id: BUTTON_IDS){
+            Button button =  (Button) findViewById(id).findViewById(R.id.button);
+            if((int) this.platesInLbs[ii] == this.platesInLbs[ii])
+                value = String.valueOf((int) this.platesInLbs[ii]);
+            else
+                value = String.valueOf(this.platesInLbs[ii]);
+            button.setText(value);
+            this.weightButtons.add(button);
+            ii++;
+        }
     }
 
 }
