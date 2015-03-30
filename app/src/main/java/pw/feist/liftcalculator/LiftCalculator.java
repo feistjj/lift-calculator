@@ -44,8 +44,8 @@ public class LiftCalculator extends ActionBarActivity {
         plateMapLbs.put((float) 25, new Plate((float) 0.6, "#008000")); //green
         plateMapLbs.put((float) 15, new Plate((float) 0.5, "#0000FF")); //blue
         plateMapLbs.put((float) 10, new Plate((float) 0.4, "#000000")); //black
-        plateMapLbs.put((float) 5, new Plate((float) 0.3, "#888888", (float) 0.5));  //gray
-        plateMapLbs.put((float) 2.5, new Plate((float) 0.2, "#888888", (float) 0.3)); //gray
+        plateMapLbs.put((float) 5, new Plate((float) 0.3, "#888888", (float) 0.6));  //gray
+        plateMapLbs.put((float) 2.5, new Plate((float) 0.2, "#888888", (float) 0.4)); //gray
     }
     private static final HashMap<Float, Plate> plateMapKilos;
     static
