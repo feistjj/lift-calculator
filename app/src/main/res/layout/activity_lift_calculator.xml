@@ -73,6 +73,15 @@
             android:src="@drawable/rectangle">
         </ImageView>
         <ImageView
+            android:id="@+id/barEnd"
+            android:layout_width="30dp"
+            android:layout_height="70dp"
+            android:paddingRight="3dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/rectangle"/>
+        <ImageView
+            android:layout_toRightOf="@id/barEnd"
             android:orientation="horizontal"
             android:layout_centerVertical="true"
             android:layout_width="fill_parent"
