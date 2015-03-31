@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Lift Calculator</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="plates">Plates:</string>
     <string name="submit">Submit</string>
     <string name="action_settings">Settings</string>
     <string name="weight_lbs">Weight (Lbs)</string>
@@ -19,6 +19,18 @@
     <string-array name="bar_kilos">
         <item>20 Kilos</item>
         <item>15 Kilos</item>
+    </string-array>
+    <string-array name="numbers">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
     </string-array>
 
 </resources>
