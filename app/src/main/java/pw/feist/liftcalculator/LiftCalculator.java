@@ -64,8 +64,8 @@ public class LiftCalculator extends ActionBarActivity {
         plateMapKilos.put((float) 15, new Plate((float) 0.6, "#008000"));
         plateMapKilos.put((float) 10, new Plate((float) 0.5, "#0000FF"));
         plateMapKilos.put((float) 5, new Plate((float) 0.4, "#000000"));
-        plateMapLbs.put((float) 2.5, new Plate((float) 0.3, "#888888", (float) 0.6));  //gray
-        plateMapLbs.put((float) 1.25, new Plate((float) 0.2, "#888888", (float) 0.4)); //gray
+        plateMapKilos.put((float) 2.5, new Plate((float) 0.3, "#888888", (float) 0.6));  //gray
+        plateMapKilos.put((float) 1.25, new Plate((float) 0.2, "#888888", (float) 0.4)); //gray
 
     }
 
@@ -110,7 +110,7 @@ public class LiftCalculator extends ActionBarActivity {
         int selection = this.lbsIsRegion ? 0 : 1;
         regionSelect.setSelection(selection);
         createBarSpinner();
-        updateWeightButtons();
+        weightButtonsUpdateRegion();
 
     }
 
@@ -202,7 +202,7 @@ public class LiftCalculator extends ActionBarActivity {
             }
         }
         createBarSpinner();
-        updateWeightButtons();
+        weightButtonsUpdateRegion();
     }
 
     @OnTextChanged(value = R.id.weightField)
@@ -236,6 +236,7 @@ public class LiftCalculator extends ActionBarActivity {
             }
         }
         createPlates(ourPlates);
+        setWeightFields(ourPlates);
     }
 
 
@@ -314,7 +315,18 @@ public class LiftCalculator extends ActionBarActivity {
         editText.setHint("#");
     }
 
-    void updateWeightButtons(){
+    void setWeightFields(List<Float> plates){
+        int ii = 0;
+        Float [] allPlates = this.lbsIsRegion ? this.platesInLbs : this.platesInKilos;
+        for(int id: WeightLayouts){
+
+            EditText textField = (EditText) findViewById(id).findViewById(R.id.editText);
+            textField.setText(String.valueOf(Collections.frequency(plates, allPlates[ii])));
+            ii++;
+        }
+    }
+
+    void weightButtonsUpdateRegion(){
         int ii = 0;
         String value;
         for(int id: WeightLayouts){
