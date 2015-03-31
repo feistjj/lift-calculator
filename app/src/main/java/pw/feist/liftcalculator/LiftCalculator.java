@@ -9,10 +9,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -27,6 +30,8 @@ import java.util.List;
 
 
 import butterknife.ButterKnife;
+import butterknife.InjectViews;
+import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 
@@ -273,6 +278,12 @@ public class LiftCalculator extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void weightButtonClicked(View view){
+         View parent = (View) view.getParent();
+         EditText textField = (EditText) parent.findViewById(R.id.editText);
+         textField.setFocusable(false);
     }
 
     void createWeightButtons(){
