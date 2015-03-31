@@ -14,14 +14,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 
 import java.util.ArrayList;
@@ -30,8 +27,6 @@ import java.util.List;
 
 
 import butterknife.ButterKnife;
-import butterknife.InjectViews;
-import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 
@@ -69,7 +64,7 @@ public class LiftCalculator extends ActionBarActivity {
     }
 
     private List<Button> weightButtons;
-    private static final int[] BUTTON_IDS = {
+    private static final int[] WeightLayouts = {
             R.id.weightSelector0,
             R.id.weightSelector1,
             R.id.weightSelector2,
@@ -290,7 +285,7 @@ public class LiftCalculator extends ActionBarActivity {
         this.weightButtons = new ArrayList<Button>();
         int ii = 0;
         String value;
-        for(int id: BUTTON_IDS){
+        for(int id: WeightLayouts){
             Button button =  (Button) findViewById(id).findViewById(R.id.button);
             if((int) this.platesInLbs[ii] == this.platesInLbs[ii])
                 value = String.valueOf((int) this.platesInLbs[ii]);
