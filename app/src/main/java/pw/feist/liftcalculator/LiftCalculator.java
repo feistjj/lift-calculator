@@ -3,6 +3,7 @@ package pw.feist.liftcalculator;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.preference.PreferenceManager;
@@ -30,6 +31,7 @@ import java.util.List;
 
 
 import butterknife.ButterKnife;
+import butterknife.OnEditorAction;
 import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 
@@ -91,7 +93,7 @@ public class LiftCalculator extends ActionBarActivity {
         setContentView(R.layout.activity_lift_calculator);
 
         //plate bitmap
-        Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888); // not sure about the size
+        Bitmap bg = Bitmap.createBitmap(400, 800, Bitmap.Config.ARGB_8888); // not sure about the size
         this.canvas = new Canvas(bg);
         ImageView ll = (ImageView) findViewById(R.id.plates);
         ll.setBackground(new BitmapDrawable(getResources(), bg));
@@ -205,7 +207,7 @@ public class LiftCalculator extends ActionBarActivity {
         weightButtonsUpdateRegion();
     }
 
-    @OnTextChanged(value = R.id.weightField)
+    @OnTextChanged(value = R.id.weightField)  // onEditorAction??
     @OnItemSelected(value = R.id.barSelect)
     void calculateWeight(){
         float userWeight;
@@ -245,16 +247,21 @@ public class LiftCalculator extends ActionBarActivity {
         //  sort weightings and divide up useable area
         Plate plate; // plate object
         RectF rect;  // rectangle depicting plate
-        float right, left = 0;
+        float right, left = 2;
 
         //top and bottom for all will match
-        int top = 0;
-        int bottom = this.canvas.getHeight();
+
+        int top = 2; //to show stroke
+        int bottom = this.canvas.getHeight() - 2;
         int spacing = 3;
         int maxPlates = weights.size() < MAX_PLATES ? MAX_PLATES : weights.size();
         float maxPlateWidth = (this.canvas.getWidth() - (maxPlates * spacing))  / maxPlates;
 
         HashMap<Float, Plate> plateMap = this.lbsIsRegion ? plateMapLbs : plateMapKilos;
+        Paint outline = new Paint();
+        outline.setStyle(Paint.Style.STROKE);
+        outline.setColor(Color.BLACK);
+        outline.setStrokeWidth(2);
 
         for(Float weight: weights){
             plate = plateMap.get(weight);
@@ -262,6 +269,7 @@ public class LiftCalculator extends ActionBarActivity {
             rect = new RectF(left, top - ((1 - plate.getHeight()) * ((top - bottom) / 2)),
                     right, bottom + ((1 - plate.getHeight()) * ((top - bottom) / 2)));
             this.canvas.drawRoundRect(rect, 10, 10, plate.getPaint());
+            this.canvas.drawRoundRect(rect, 10, 10, outline);
             left = right + spacing; //for space between plates
         }
 
