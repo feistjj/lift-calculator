@@ -9,6 +9,8 @@ import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -31,6 +34,7 @@ import java.util.List;
 
 
 import butterknife.ButterKnife;
+import butterknife.InjectViews;
 import butterknife.OnEditorAction;
 import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
@@ -39,6 +43,7 @@ import butterknife.OnTextChanged;
 public class LiftCalculator extends ActionBarActivity {
 
     private static final int MAX_PLATES = 6;
+    private static final String EDIT_TAG = "APP_EDIT";
 
     private static final Float [] platesInLbs = {(float) 45, (float) 35, (float) 25,
             (float) 15, (float)10, (float) 5, (float) 2.5};
@@ -72,7 +77,9 @@ public class LiftCalculator extends ActionBarActivity {
     }
 
     private List<Button> weightButtons;
-    private static final int[] WeightLayouts = {
+
+
+    @InjectViews({
             R.id.weightSelector0,
             R.id.weightSelector1,
             R.id.weightSelector2,
@@ -80,12 +87,13 @@ public class LiftCalculator extends ActionBarActivity {
             R.id.weightSelector4,
             R.id.weightSelector5,
             R.id.weightSelector6,
-    };
+    }) LinearLayout[] WeightLayouts;
 
     private Canvas canvas;
     private int barWeight;
     private List<Float> currentPlates;
     boolean lbsIsRegion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +107,7 @@ public class LiftCalculator extends ActionBarActivity {
         ll.setBackground(new BitmapDrawable(getResources(), bg));
 
         ButterKnife.inject(this);
+
         // Restore preferences
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         this.barWeight = settings.getInt("barWeight", 45);
@@ -111,8 +120,17 @@ public class LiftCalculator extends ActionBarActivity {
         Spinner regionSelect = (Spinner) findViewById(R.id.regionSelect);
         int selection = this.lbsIsRegion ? 0 : 1;
         regionSelect.setSelection(selection);
+
+
         createBarSpinner();
         weightButtonsUpdateRegion();
+
+        // add watcher to text field
+        EditText textField;
+        for(LinearLayout layout: WeightLayouts){
+            textField = (EditText) layout.findViewById(R.id.editText);
+            textField.addTextChangedListener(new PlateWatcher(this, textField));
+        }
 
     }
 
@@ -205,11 +223,18 @@ public class LiftCalculator extends ActionBarActivity {
         }
         createBarSpinner();
         weightButtonsUpdateRegion();
+        // use butterknife to update bar
     }
 
     @OnTextChanged(value = R.id.weightField)  // onEditorAction??
     @OnItemSelected(value = R.id.barSelect)
-    void calculateWeight(){
+    void calculateWeight(View view){
+
+        //someone already did the rest for us
+        if(view.getTag() == EDIT_TAG){
+            view.setTag(null);
+            return;
+        }
         float userWeight;
         BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
         this.canvas.drawColor(0, PorterDuff.Mode.CLEAR);
@@ -243,7 +268,7 @@ public class LiftCalculator extends ActionBarActivity {
 
 
 
-    private void createPlates(List<Float> weights){
+    public void createPlates(List<Float> weights){
         //  sort weightings and divide up useable area
         Plate plate; // plate object
         RectF rect;  // rectangle depicting plate
@@ -326,20 +351,22 @@ public class LiftCalculator extends ActionBarActivity {
     void setWeightFields(List<Float> plates){
         int ii = 0;
         Float [] allPlates = this.lbsIsRegion ? this.platesInLbs : this.platesInKilos;
-        for(int id: WeightLayouts){
+        for(LinearLayout layout: WeightLayouts){
 
-            EditText textField = (EditText) findViewById(id).findViewById(R.id.editText);
+            EditText textField = (EditText) layout.findViewById(R.id.editText);
             textField.setText(String.valueOf(Collections.frequency(plates, allPlates[ii])));
+            textField.setTag(EDIT_TAG);
             ii++;
         }
     }
 
+
     void weightButtonsUpdateRegion(){
         int ii = 0;
         String value;
-        for(int id: WeightLayouts){
-            Button button =  (Button) findViewById(id).findViewById(R.id.button);
-            EditText textField = (EditText) findViewById(id).findViewById(R.id.editText);
+        for(LinearLayout layout: WeightLayouts){
+            Button button =  (Button) layout.findViewById(R.id.button);
+            EditText textField = (EditText) layout.findViewById(R.id.editText);
             setButtonEditTextDefaultState(textField);
             int plateInt = (int) ((float) this.currentPlates.get(ii));
             if(this.currentPlates.get(ii) == (float) plateInt)
@@ -352,3 +379,4 @@ public class LiftCalculator extends ActionBarActivity {
     }
 
 }
+
