@@ -79,9 +79,6 @@ public class LiftCalculator extends Activity {
 
     }
 
-    private List<Button> weightButtons;
-
-
     @InjectViews({
             R.id.weightSelector0,
             R.id.weightSelector1,
@@ -97,8 +94,6 @@ public class LiftCalculator extends Activity {
     private int barWeight;
     private List<Float> currentPlates;
     boolean lbsIsRegion;
-
-    AlertDialog numberPickerAlert;
 
 
     @Override
@@ -131,7 +126,6 @@ public class LiftCalculator extends Activity {
         createBarSpinner();
         weightButtonsUpdateRegion();
 
-        numberPickerAlert = buildNumberPicker();
 
         // add watcher to spinner
         /*NumberPicker platePicker;
@@ -394,11 +388,12 @@ public class LiftCalculator extends Activity {
         }
     }
 
-    AlertDialog buildNumberPicker(){
+    void createNumberPickerDialog(final TextView textView){
         RelativeLayout linearLayout = new RelativeLayout(this);
         final NumberPicker aNumberPicker = new NumberPicker(this);
+
         aNumberPicker.setMaxValue(9);
-        aNumberPicker.setMinValue(1);
+        aNumberPicker.setMinValue(0);
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(50, 50);
         RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -415,7 +410,7 @@ public class LiftCalculator extends Activity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,
                                                 int id) {
-                                Log.e("", "New Quantity Value : " + aNumberPicker.getValue());
+                                textView.setText(String.valueOf(aNumberPicker.getValue()));
 
                             }
                         })
@@ -426,12 +421,14 @@ public class LiftCalculator extends Activity {
                                 dialog.cancel();
                             }
                         });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        return alertDialog;
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 
     public void numberSelect(View view) {
-        numberPickerAlert.show();
+        final TextView textView = (TextView) view;
+        createNumberPickerDialog(textView);
+
     }
 
     void weightButtonsUpdateRegion() {
