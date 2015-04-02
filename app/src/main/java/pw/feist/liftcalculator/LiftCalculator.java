@@ -11,6 +11,8 @@ import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -127,14 +129,12 @@ public class LiftCalculator extends Activity {
         weightButtonsUpdateRegion();
 
 
-        // add watcher to spinner
-        /*NumberPicker platePicker;
+        // add watcher to text field
+        TextView textField;
         for(LinearLayout layout: WeightLayouts){
-            platePicker = (NumberPicker) layout.findViewById(R.id.plateCount);
-            platePicker.setOnValueChangedListener(new PlateListener(platePicker));
-            platePicker.setMaxValue(9);
-            platePicker.setMinValue(0);
-        }*/
+            textField = (TextView) layout.findViewById(R.id.plateCount);
+            textField.addTextChangedListener(new PlateWatcher(this, textField));
+        }
 
     }
 
@@ -382,25 +382,25 @@ public class LiftCalculator extends Activity {
             int plateCount = plates.containsKey(allPlates[ii]) ? plates.get(allPlates[ii]) : 0;
             plateCount = plateCount > 9 ? 9 : plateCount;
             TextView platePicker = (TextView) layout.findViewById(R.id.plateCount);
+            platePicker.setTag(EDIT_TAG);
             platePicker.setText(String.valueOf(plateCount));
-            //plateSpinner.setTag(EDIT_TAG);
             ii++;
         }
     }
 
     void createNumberPickerDialog(final TextView textView){
         RelativeLayout linearLayout = new RelativeLayout(this);
-        final NumberPicker aNumberPicker = new NumberPicker(this);
+        final NumberPicker numberPicker = new NumberPicker(this);
 
-        aNumberPicker.setMaxValue(9);
-        aNumberPicker.setMinValue(0);
+        numberPicker.setMaxValue(9);
+        numberPicker.setMinValue(0);
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(50, 50);
         RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         numPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
         linearLayout.setLayoutParams(params);
-        linearLayout.addView(aNumberPicker, numPicerParams);
+        linearLayout.addView(numberPicker, numPicerParams);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Select Plate Count");
         alertDialogBuilder.setView(linearLayout);
@@ -410,7 +410,7 @@ public class LiftCalculator extends Activity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,
                                                 int id) {
-                                textView.setText(String.valueOf(aNumberPicker.getValue()));
+                                textView.setText(String.valueOf(numberPicker.getValue()));
 
                             }
                         })
@@ -447,18 +447,29 @@ public class LiftCalculator extends Activity {
             ii++;
         }
     }
-}
+    private class PlateWatcher implements TextWatcher {
+        private TextView editText;
 
-    /*
-    public class PlateListener implements NumberPicker.OnValueChangeListener {
-        private NumberPicker picker;
-
-        public PlateListener(NumberPicker p) {
-            picker = p;
+        public PlateWatcher(LiftCalculator l, TextView e) {
+            editText = e;
         }
 
         @Override
-        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            //pass
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            //pass
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if(editText.getTag() == EDIT_TAG){
+                editText.setTag(null);
+                return; //non-user edit
+            }
             TextView sibling;
             HashMap<Float, Integer> weights = new HashMap<>();
             int plateCount;
@@ -471,7 +482,7 @@ public class LiftCalculator extends Activity {
                     continue;
 
                 try {
-                    plateCount = Integer.valueOf((String) sibling.getText());
+                    plateCount = Integer.valueOf(sibling.getText().toString());
                 }
                 catch (NumberFormatException ex){
                     plateCount = 0;
@@ -490,6 +501,7 @@ public class LiftCalculator extends Activity {
         }
 
     }
+
 }
-*/
+
 
