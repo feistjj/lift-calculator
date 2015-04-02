@@ -182,8 +182,24 @@ public class LiftCalculator extends ActionBarActivity {
     @OnItemSelected(value = R.id.barSelect)
     void changeBarWeight(){
         Spinner barSelect = (Spinner) findViewById(R.id.barSelect);
-        String selected = barSelect.getSelectedItem().toString().toLowerCase();
-        this.barWeight = Integer.valueOf(selected.substring(0,2));
+        BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
+        int otherPostion = barSelect.getSelectedItemPosition() == 0 ? 1 : 0;
+        String selected = barSelect.getSelectedItem().toString();
+        String other = barSelect.getItemAtPosition(otherPostion).toString();
+        int otherInt = Integer.valueOf(other.substring(0,2));
+        barWeight = Integer.valueOf(selected.substring(0,2));
+        int currentValue;
+        try{
+         currentValue = Integer.valueOf(weightField.getText().toString());
+        }
+        catch (NumberFormatException ex){
+            return;
+        }
+        if(currentValue == 0)
+            return;
+        weightField.setTag(EDIT_TAG);
+        weightField.setText(String.valueOf(currentValue - otherInt + barWeight));
+
     }
 
 
@@ -226,41 +242,41 @@ public class LiftCalculator extends ActionBarActivity {
         // use butterknife to update bar
     }
 
-    @OnTextChanged(value = R.id.weightField)  // onEditorAction??
-    @OnItemSelected(value = R.id.barSelect)
-    void calculateWeight(View view){
-
-        //someone already did the rest for us
-        if(view.getTag() == EDIT_TAG){
-            view.setTag(null);
-            return;
-        }
+    @OnTextChanged(value = R.id.weightField)  // onEditorAction?
+    void calculateWeight(){
         float userWeight;
         BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
+        //someone already did the rest for us
+        if(weightField.getTag() == EDIT_TAG){
+            weightField.setTag(null);
+            return;
+        }
+
         this.canvas.drawColor(0, PorterDuff.Mode.CLEAR);
 
+        HashMap<Float, Integer> ourPlates = new HashMap<>();
         try {
             userWeight = Float.valueOf(weightField.getText().toString());
         }
         catch (NumberFormatException ex){
+            setWeightFields(ourPlates); //clear
             return; // probably empty
         }
+
         if(userWeight <= this.barWeight) {
+            setWeightFields(ourPlates); //clear
             return;
         }
         userWeight = (userWeight - this.barWeight)/2;
         int quotient;
-        List<Float> ourPlates = new ArrayList<Float>();
+
         for (float weight: this.currentPlates){
             quotient = (int) (userWeight / weight);
-            if (quotient > 0){
-                for (int ii = 0; ii < quotient; ii ++){
-                    ourPlates.add(weight);
-                }
+            ourPlates.put(weight, quotient);
             userWeight -= (int) (quotient * weight);
             if(userWeight == 0)  //avoid divide by zero errors
                 break;
-            }
+
         }
         createPlates(ourPlates);
         setWeightFields(ourPlates);
@@ -268,7 +284,7 @@ public class LiftCalculator extends ActionBarActivity {
 
 
 
-    public void createPlates(List<Float> weights){
+    private void createPlates(HashMap<Float, Integer> drawPlatesMap){
         //  sort weightings and divide up useable area
         Plate plate; // plate object
         RectF rect;  // rectangle depicting plate
@@ -279,7 +295,11 @@ public class LiftCalculator extends ActionBarActivity {
         int top = 2; //to show stroke
         int bottom = this.canvas.getHeight() - 2;
         int spacing = 3;
-        int maxPlates = weights.size() < MAX_PLATES ? MAX_PLATES : weights.size();
+        int drawLength = 0;
+        for(int count : drawPlatesMap.values())
+            drawLength += count;
+
+        int maxPlates = drawLength < MAX_PLATES ? MAX_PLATES : drawLength;
         float maxPlateWidth = (this.canvas.getWidth() - (maxPlates * spacing))  / maxPlates;
 
         HashMap<Float, Plate> plateMap = this.lbsIsRegion ? plateMapLbs : plateMapKilos;
@@ -288,14 +308,25 @@ public class LiftCalculator extends ActionBarActivity {
         outline.setColor(Color.BLACK);
         outline.setStrokeWidth(2);
 
-        for(Float weight: weights){
+        // this is lame, maybe new object
+        List<Float> keys = new ArrayList<>(drawPlatesMap.keySet());
+        Collections.sort(keys);
+        Collections.reverse(keys);
+
+        canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+
+        for(Float weight: keys){
             plate = plateMap.get(weight);
-            right = left + maxPlateWidth * plate.getWeight();
-            rect = new RectF(left, top - ((1 - plate.getHeight()) * ((top - bottom) / 2)),
-                    right, bottom + ((1 - plate.getHeight()) * ((top - bottom) / 2)));
-            this.canvas.drawRoundRect(rect, 10, 10, plate.getPaint());
-            this.canvas.drawRoundRect(rect, 10, 10, outline);
-            left = right + spacing; //for space between plates
+
+            for(int ii = 0; ii < drawPlatesMap.get(weight); ii++) {
+                right = left + maxPlateWidth * plate.getWeight();
+                rect = new RectF(left, top - ((1 - plate.getHeight()) * ((top - bottom) / 2)),
+                        right, bottom + ((1 - plate.getHeight()) * ((top - bottom) / 2)));
+                this.canvas.drawRoundRect(rect, 10, 10, plate.getPaint());
+                this.canvas.drawRoundRect(rect, 10, 10, outline);
+                left = right + spacing; //for space between plates
+            }
+
         }
 
     }
@@ -348,13 +379,13 @@ public class LiftCalculator extends ActionBarActivity {
         editText.setHint("#");
     }
 
-    void setWeightFields(List<Float> plates){
+    void setWeightFields(HashMap<Float, Integer> plates){
         int ii = 0;
         Float [] allPlates = this.lbsIsRegion ? this.platesInLbs : this.platesInKilos;
         for(LinearLayout layout: WeightLayouts){
-
+            int plateCount = plates.containsKey(allPlates[ii]) ? plates.get(allPlates[ii]) : 0;
             EditText textField = (EditText) layout.findViewById(R.id.editText);
-            textField.setText(String.valueOf(Collections.frequency(plates, allPlates[ii])));
+            textField.setText(String.valueOf(plateCount));
             textField.setTag(EDIT_TAG);
             ii++;
         }
@@ -380,23 +411,55 @@ public class LiftCalculator extends ActionBarActivity {
 
     public class PlateWatcher implements TextWatcher {
         private EditText editText;
-        private LiftCalculator liftCalc;
 
         public PlateWatcher(LiftCalculator l, EditText e) {
-            liftCalc = l;
             editText = e;
         }
 
+        @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             //pass
         }
 
+        @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             //pass
         }
 
+        @Override
         public void afterTextChanged(Editable s) {
-            liftCalc.createPlates();
+            if(editText.getTag() == EDIT_TAG){
+                editText.setTag(null);
+                return; //non-user edit
+            }
+            EditText sibling;
+            HashMap<Float, Integer> weights = new HashMap<>();
+            int plateCount;
+            int ii = 0;
+            int sum = 0;
+            for(LinearLayout layout: WeightLayouts){
+                sibling = (EditText) layout.findViewById(R.id.editText);
+
+                if(!sibling.isFocusable()) //disabled
+                    continue;
+
+                try {
+                    plateCount = Integer.valueOf(sibling.getText().toString());
+                }
+                catch (NumberFormatException ex){
+                    plateCount = 0;
+                }
+                weights.put(currentPlates.get(ii), plateCount);
+                sum += (currentPlates.get(ii) * plateCount);
+                ii++;
+            }
+            createPlates(weights);
+            BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
+            weightField.setTag(EDIT_TAG);
+            if(sum > 0)
+                weightField.setText(String.valueOf((sum * 2) + barWeight));
+            else
+                weightField.setText("");
         }
 
     }
