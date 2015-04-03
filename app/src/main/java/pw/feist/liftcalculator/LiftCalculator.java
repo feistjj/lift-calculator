@@ -205,8 +205,13 @@ public class LiftCalculator extends Activity {
         }
         if (currentValue == 0)
             return;
-        weightField.setTag(EDIT_TAG);
-        weightField.setText(String.valueOf(currentValue - otherInt + barWeight));
+
+        if(currentValue > otherInt){
+            weightField.setTag(EDIT_TAG);
+            weightField.setText(String.valueOf(currentValue - otherInt + barWeight));
+        }
+        else
+            calculateWeight();
 
     }
 
@@ -242,7 +247,8 @@ public class LiftCalculator extends Activity {
             }
         }
         weightButtonsUpdateRegion();
-        weightField.setText(userWeight.toString());
+        if(userWeight > 0)
+            weightField.setText(userWeight.toString());
         createBarSpinner();
 
 
