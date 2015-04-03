@@ -47,6 +47,8 @@ import butterknife.OnTextChanged;
 public class LiftCalculator extends Activity {
 
     private static final int MAX_PLATES = 6;
+    private static final int MAX_WEIGHT = 999;
+
     private static final String EDIT_TAG = "APP_EDIT";
 
     private static final Float[] platesInLbs = {(float) 45, (float) 35, (float) 25,
@@ -158,7 +160,7 @@ public class LiftCalculator extends Activity {
     }
 
 
-    void createBarSpinner() {
+    void  createBarSpinner() {
         List<String> spinnerArray = new ArrayList<String>();
         if (this.lbsIsRegion) {
             spinnerArray.add("45 Lbs");
@@ -179,11 +181,16 @@ public class LiftCalculator extends Activity {
         } else if (selected.equals("35 lbs") || this.barWeight == 15) {
             barSelect.setSelection(1);
         }
+        barSelect.setTag(EDIT_TAG);
     }
 
     @OnItemSelected(value = R.id.barSelect)
     void changeBarWeight() {
         Spinner barSelect = (Spinner) findViewById(R.id.barSelect);
+        if(barSelect.getTag() == EDIT_TAG){
+            barSelect.setTag(null);
+            return; //non-user edit
+        }
         BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
         int otherPostion = barSelect.getSelectedItemPosition() == 0 ? 1 : 0;
         String selected = barSelect.getSelectedItem().toString();
@@ -224,7 +231,6 @@ public class LiftCalculator extends Activity {
 
             if (userWeight > 0) {
                 userWeight = (int) (userWeight * 2.20462);
-                weightField.setText(userWeight.toString());
             }
 
         } else {
@@ -232,17 +238,20 @@ public class LiftCalculator extends Activity {
             this.currentPlates = new ArrayList<Float>(Arrays.asList(this.platesInKilos));
             weightField.setHint(R.string.weight_kilos);
             if (userWeight > 0) {
-                userWeight = (int) (userWeight / 2.20462);
-                weightField.setText(userWeight.toString());
+                userWeight = (int) (userWeight * 0.453592);
             }
         }
-        createBarSpinner();
         weightButtonsUpdateRegion();
-        // use butterknife to update bar
+        weightField.setText(userWeight.toString());
+        createBarSpinner();
+
+
+
+
+
     }
 
     @OnTextChanged(value = R.id.weightField)
-        // onEditorAction?
     void calculateWeight() {
         float userWeight;
         BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
@@ -494,8 +503,14 @@ public class LiftCalculator extends Activity {
             drawPlates(weights);
             BootstrapEditText weightField = (BootstrapEditText) findViewById(R.id.weightField);
             weightField.setTag(EDIT_TAG);
-            if(sum > 0)
-                weightField.setText(String.valueOf((sum * 2) + barWeight));
+
+            sum = (sum * 2) + barWeight;
+
+            if (sum > MAX_WEIGHT){
+                weightField.setText(String.valueOf(MAX_WEIGHT));
+            }
+            else if(sum > 0)
+                weightField.setText(String.valueOf(sum));
             else
                 weightField.setText("");
         }
