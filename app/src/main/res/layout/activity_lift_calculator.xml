@@ -149,16 +149,32 @@
      </LinearLayout>
 
 
-    <!-- weight text field -->
-    <com.beardedhen.androidbootstrap.BootstrapEditText
-        android:id="@+id/weightField"
-        android:layout_width="150dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
-        android:hint="@string/weight_lbs"
-        android:inputType="number"
-        android:padding="1dp"
-        android:maxLength="3"
-        />
+       >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/weight_selector"
+            android:textSize="18sp"
+            android:paddingRight="5dp"
+            android:textColor="@color/black"/>
+        <!-- weight text field -->
+        <com.beardedhen.androidbootstrap.BootstrapEditText
+            android:id="@+id/weightField"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:hint="@string/weight_lbs"
+            android:inputType="number"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingBottom="1dp"
+            android:paddingTop="1dp"
+            android:maxLength="3"
+            />
+    </LinearLayout>
 
 </LinearLayout>

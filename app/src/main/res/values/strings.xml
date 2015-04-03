@@ -2,6 +2,7 @@
     <string name="app_name">Lift Calculator</string>
 
     <string name="plates">Plates (Click to Disable)</string>
+    <string name="weight_selector">Total:</string>
     <string name="submit">Submit</string>
     <string name="action_settings">Settings</string>
     <string name="weight_lbs">Weight (Lbs)</string>
