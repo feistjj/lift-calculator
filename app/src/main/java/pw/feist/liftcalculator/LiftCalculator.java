@@ -12,6 +12,8 @@ import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -40,6 +43,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectViews;
+import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 
@@ -206,12 +210,7 @@ public class LiftCalculator extends Activity {
         if (currentValue == 0)
             return;
 
-        if(currentValue > otherInt){
-            weightField.setTag(EDIT_TAG);
-            weightField.setText(String.valueOf(currentValue - otherInt + barWeight));
-        }
-        else
-            calculateWeight();
+        calculateWeight();
 
     }
 
@@ -461,6 +460,70 @@ public class LiftCalculator extends Activity {
             button.setText(value);
             ii++;
         }
+    }
+    @OnClick(value=R.id.percent)
+    public void calculatePercent(){
+        RelativeLayout linearLayout = new RelativeLayout(this);
+        final BootstrapEditText percentField = new BootstrapEditText(this);
+
+        percentField.setInputType(InputType.TYPE_CLASS_NUMBER);
+        InputFilter[] inputArray = new InputFilter[1];
+        inputArray[0] = new InputFilter.LengthFilter(3);
+        percentField.setFilters(inputArray);
+        percentField.setHint("95%");
+        percentField.setPadding(1, 1, 1, 1);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(50, 50);
+        RelativeLayout.LayoutParams numPicerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        numPicerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        final BootstrapEditText weightView = (BootstrapEditText) findViewById(R.id.weightField);
+
+        linearLayout.setLayoutParams(params);
+        linearLayout.addView(percentField, numPicerParams);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Set Percent");
+        alertDialogBuilder.setView(linearLayout);
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int id) {
+                                float percent;
+                                try {
+                                    percent = Float.valueOf(percentField.getText().toString());
+                                    percent = percent > 0 ? percent / 100 : 0;
+                                }
+                                catch (NumberFormatException ex){
+                                    percent = 1;
+                                }
+                                int curVal;
+                                try {
+                                    curVal = Integer.valueOf(weightView.getText().toString());
+                                }
+                                catch (NumberFormatException ex){
+                                    curVal = 0;
+                                }
+                                int total = (int)(percent * curVal);
+                                total = total > MAX_WEIGHT ? 999 : total;
+
+                                if(total > 0)
+                                    weightView.setText(String.valueOf(total));
+                                else
+                                    weightView.setText("");
+
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
     private class PlateWatcher implements TextWatcher {
         private TextView editText;
