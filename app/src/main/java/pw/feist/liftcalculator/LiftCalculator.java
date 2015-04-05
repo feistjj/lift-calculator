@@ -555,7 +555,7 @@ public class LiftCalculator extends Activity {
             HashMap<Float, Integer> weights = new HashMap<>();
             int plateCount;
             int ii = 0;
-            int sum = 0;
+            float sum = 0;
             for(LinearLayout layout: WeightLayouts){
                 sibling = (TextView) layout.findViewById(R.id.plateCount);
 
@@ -569,7 +569,7 @@ public class LiftCalculator extends Activity {
                     plateCount = 0;
                 }
                 weights.put(currentPlates.get(ii), plateCount);
-                sum += (currentPlates.get(ii) * plateCount);
+                sum += currentPlates.get(ii) * plateCount;
                 ii++;
             }
             drawPlates(weights);
@@ -582,7 +582,7 @@ public class LiftCalculator extends Activity {
                 weightField.setText(String.valueOf(MAX_WEIGHT));
             }
             else if(sum > barWeight)
-                weightField.setText(String.valueOf(sum));
+                weightField.setText(String.valueOf((int) sum));
             else
                 weightField.setText("");
         }
