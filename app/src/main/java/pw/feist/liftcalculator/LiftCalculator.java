@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -130,7 +131,7 @@ public class LiftCalculator extends Activity {
         int selection = this.lbsIsRegion ? 0 : 1;
         regionSelect.setSelection(selection);
 
-
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         createBarSpinner();
         weightButtonsUpdateRegion();
 
@@ -375,12 +376,14 @@ public class LiftCalculator extends Activity {
             plateCount.setFocusable(false);
             plateCount.setBackgroundColor(Color.GRAY);
             plateCount.setText("0");
+            plateCount.setClickable(false);
             this.currentPlates.remove(plate);
         } else {
             setPlateCountDefaultState(plateCount);
             this.currentPlates.add(plate);
             Collections.sort(currentPlates);
             Collections.reverse(currentPlates);
+            plateCount.setClickable(true);
         }
     }
 
@@ -578,7 +581,7 @@ public class LiftCalculator extends Activity {
             if (sum > MAX_WEIGHT){
                 weightField.setText(String.valueOf(MAX_WEIGHT));
             }
-            else if(sum > 0)
+            else if(sum > barWeight)
                 weightField.setText(String.valueOf(sum));
             else
                 weightField.setText("");

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Lift Calculator</string>
 
-    <string name="plates">Plates (Click to Disable)</string>
+    <string name="plates">Plates (Click to Edit/Disable)</string>
     <string name="percent">%</string>
     <string name="weight_selector">Total:</string>
     <string name="submit">Submit</string>
