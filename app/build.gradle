@@ -24,4 +24,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.beardedhen:androidbootstrap:+'
     compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.android.support:support-v4:22.+'
+    compile 'com.google.android.gms:play-services-analytics:7.0.0'
 }

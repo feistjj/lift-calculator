@@ -34,6 +34,9 @@ import android.widget.TextView;
 
 
 import com.beardedhen.androidbootstrap.BootstrapEditText;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +106,7 @@ public class LiftCalculator extends Activity {
     private int barWeight;
     private List<Float> currentPlates;
     boolean lbsIsRegion;
+    Tracker tracker;
 
 
     @Override
@@ -143,12 +147,29 @@ public class LiftCalculator extends Activity {
             textField.addTextChangedListener(new PlateWatcher(this, textField));
         }
 
+
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        tracker = getTracker();
+        tracker.setScreenName("Main");
+        tracker.send(new HitBuilders.AppViewBuilder().build());
+
+    }
+
+    String PROPERTY_ID = "UA-61560476-1";
+
+    synchronized Tracker getTracker() {
+
+        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+        Tracker t = analytics.newTracker(PROPERTY_ID);
+
+        return t;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         saveSettings();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     void saveSettings() {
