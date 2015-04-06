@@ -268,9 +268,11 @@ public class LiftCalculator extends Activity {
             }
         }
         weightButtonsUpdateRegion();
+        createBarSpinner();
+        changeBarWeight();
         if(userWeight > 0)
             weightField.setText(userWeight.toString());
-        createBarSpinner();
+
 
 
 
