@@ -16,13 +16,11 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -394,7 +392,7 @@ public class LiftCalculator extends Activity {
         View parent = (View) view.getParent();
         TextView plateCount = (TextView) parent.findViewById(R.id.plateCount);
         Button button = (Button) view;
-        Float plate = Float.valueOf((String) button.getText());
+        Float plate = Float.valueOf(button.getText().toString());
         if (plateCount.isFocusable()) {
             plateCount.setFocusable(false);
             plateCount.setBackgroundColor(Color.GRAY);
